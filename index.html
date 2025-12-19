@@ -3,10 +3,87 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/jpeg" href="/kaio-zaga-links/assets/favicon.jpeg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Kaio Zaga - Landing Page Premium" />
   <title>Kaio Zaga</title>
+  <script>
+    // Detectar domínio e ajustar base path dinamicamente - DEVE RODAR PRIMEIRO
+    (function () {
+      const hostname = window.location.hostname;
+      const isCustomDomain = hostname.includes('kaiozaga.com.br');
+      const basePath = isCustomDomain ? '' : '/kaio-zaga-links';
+
+      // Armazenar base path para uso no código
+      window.__BASE_PATH__ = basePath;
+
+      // Ajustar favicon
+      const favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      favicon.type = 'image/jpeg';
+      favicon.href = basePath + '/assets/favicon.jpeg';
+      document.head.appendChild(favicon);
+
+      // Função para ajustar caminhos de assets
+      function adjustAssetPath(url) {
+        if (!url || url.startsWith('http') || url.startsWith('data:') || url.startsWith('#')) {
+          return url;
+        }
+        // Se já tem o basePath, não ajusta
+        if (url.startsWith(basePath)) {
+          return url;
+        }
+        // Se começa com /, adiciona basePath
+        if (url.startsWith('/')) {
+          return basePath + url;
+        }
+        return url;
+      }
+
+      // Ajustar elementos que já existem no HTML (scripts e links)
+      function adjustExistingAssets() {
+        // Ajustar scripts
+        document.querySelectorAll('script[src]').forEach(function (script) {
+          const src = script.getAttribute('src');
+          if (src) {
+            script.setAttribute('src', adjustAssetPath(src));
+          }
+        });
+
+        // Ajustar links CSS
+        document.querySelectorAll('link[rel="stylesheet"]').forEach(function (link) {
+          const href = link.getAttribute('href');
+          if (href) {
+            link.setAttribute('href', adjustAssetPath(href));
+          }
+        });
+      }
+
+      // Ajustar imediatamente (se o HTML já foi parseado)
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', adjustExistingAssets);
+      } else {
+        adjustExistingAssets();
+      }
+
+      // Observar mudanças no head para ajustar novos elementos adicionados pelo Vite
+      const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) {
+              if (node.tagName === 'SCRIPT' && node.src) {
+                node.src = adjustAssetPath(node.src);
+              }
+              if (node.tagName === 'LINK' && node.rel === 'stylesheet' && node.href) {
+                node.href = adjustAssetPath(node.href);
+              }
+            }
+          });
+        });
+      });
+
+      observer.observe(document.head, { childList: true, subtree: true });
+    })();
+  </script>
 </head>
 
 <body style="margin: 0; padding: 0; background: #000000; min-height: 100vh;">
