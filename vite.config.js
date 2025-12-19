@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/kaio-zaga-links/', // Base path para GitHub Pages
+  base: '/', // Base path para GitHub Pages
   server: {
     port: 3000,
     open: true
