@@ -1,15 +1,18 @@
 // Configurações centralizadas do projeto Kaio Zaga
 // Edite este arquivo para personalizar facilmente
 
+// Base URL do Vite (inclui o base path configurado)
+const BASE_URL = import.meta.env.BASE_URL
+
 export const config = {
   // Informações do perfil
   profile: {
     name: 'Kaio Zaga',
-    logo: '/assets/logo-letra-branca-sf.png', // Logo com o nome
-    image: '/assets/capa-kaio.jpg', // Imagem padrão (fallback)
-    imageMobile: '/assets/kaio-zaga-mobile.png', // Imagem para mobile
-    imageDesktop: '/assets/kaio-zaga-desktop.png', // Imagem para desktop
-    video: '/assets/video-kaio.mp4'
+    logo: `${BASE_URL}assets/logo-letra-branca-sf.png`, // Logo com o nome
+    image: `${BASE_URL}assets/capa-kaio.jpg`, // Imagem padrão (fallback)
+    imageMobile: `${BASE_URL}assets/kaio-zaga-mobile.png`, // Imagem para mobile
+    imageDesktop: `${BASE_URL}assets/kaio-zaga-desktop.png`, // Imagem para desktop
+    video: `${BASE_URL}assets/video-kaio.mp4`
   },
 
   // Links sociais (edite os URLs aqui)
