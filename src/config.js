@@ -21,37 +21,37 @@ export const config = {
       id: 'instagram',
       label: 'Instagram',
       icon: '📷',
-      href: 'https://instagram.com',
+      href: 'https://www.instagram.com/kaiozaga/',
       color: 'from-purple-500 to-pink-500'
     },
     {
       id: 'whatsapp',
       label: 'WhatsApp',
       icon: '💬',
-      href: 'https://wa.me',
+      href: 'https://wa.me/5562981265955?text=Ol%C3%A1!%20Acabei%20de%20visitar%20o%20seu%20Instagram%20e%20gostaria%20de%20agendar%20um%20hor%C3%A1rio.',
       color: 'from-green-500 to-emerald-500'
     },
     {
       id: 'location',
       label: 'Localização',
       icon: '📍',
-      href: '#location',
+      href: 'https://maps.app.goo.gl/TVZipXFqYuiNE4Y27',
       color: 'from-blue-500 to-cyan-500'
     },
-    {
-      id: 'tiktok',
-      label: 'TikTok',
-      icon: '🎵',
-      href: 'https://tiktok.com',
-      color: 'from-black to-gray-800'
-    },
-    {
-      id: 'phone',
-      label: 'Ligação',
-      icon: '📞',
-      href: 'tel:+5511999999999',
-      color: 'from-yellow-500 to-orange-500'
-    }
+    // {
+    //   id: 'tiktok',
+    //   label: 'TikTok',
+    //   icon: '🎵',
+    //   href: 'https://tiktok.com',
+    //   color: 'from-black to-gray-800'
+    // },
+    // {
+    //   id: 'phone',
+    //   label: 'Ligação',
+    //   icon: '📞',
+    //   href: 'tel:+5511999999999',
+    //   color: 'from-yellow-500 to-orange-500'
+    // }
   ],
 
   // Cores do tema (cores em formato hexadecimal)
