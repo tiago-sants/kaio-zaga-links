@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/kaio-zaga-links/',
+  base: '/', // Base raiz para funcionar com domínio personalizado
   server: {
     port: 3000,
     open: true

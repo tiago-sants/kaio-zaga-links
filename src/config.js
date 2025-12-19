@@ -1,8 +1,27 @@
 // Configurações centralizadas do projeto Kaio Zaga
 // Edite este arquivo para personalizar facilmente
 
-// Base URL do Vite (inclui o base path configurado)
-const BASE_URL = import.meta.env.BASE_URL
+// Base URL dinâmico baseado no domínio
+// Se estiver em domínio personalizado (kaiozaga.com.br), usa raiz (/)
+// Se estiver em GitHub Pages padrão, usa /kaio-zaga-links/
+function getBaseUrl() {
+  if (typeof window !== 'undefined') {
+    // Usa o base path definido no script inline do index.html
+    if (window.__BASE_PATH__ !== undefined) {
+      return window.__BASE_PATH__ + '/'
+    }
+
+    const hostname = window.location.hostname
+    // Se for domínio personalizado, usa raiz
+    if (hostname.includes('kaiozaga.com.br')) {
+      return '/'
+    }
+  }
+  // Para GitHub Pages padrão ou desenvolvimento, usa o base do Vite
+  return import.meta.env.BASE_URL || '/kaio-zaga-links/'
+}
+
+const BASE_URL = getBaseUrl()
 
 export const config = {
   // Informações do perfil
