@@ -13,9 +13,12 @@ const VideoSection = () => {
   const videoRef = useRef(null)
   const overlayRef = useRef(null)
   const [videoLoaded, setVideoLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
   const loadingAttemptedRef = useRef(false)
   const playingRef = useRef(false)
-  
+  const [isMobile, setIsMobile] = useState(false)
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
@@ -28,9 +31,19 @@ const VideoSection = () => {
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.6, 0.4, 0.7])
   const overlayBlur = useTransform(scrollYProgress, [0, 1], [15, 25])
   const darkenOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.2, 0.4, 0.3])
-  
+
   // Estado para controlar visibilidade do vídeo
   const [videoReady, setVideoReady] = useState(false)
+
+  // Detectar se é mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Carregar vídeo e controlar play/pause baseado na visibilidade
   useEffect(() => {
@@ -39,36 +52,126 @@ const VideoSection = () => {
     if (!video || !section) return
 
     loadingAttemptedRef.current = true
+    setIsLoading(true)
 
     const handlePlaying = () => {
       setVideoLoaded(true)
+      setIsLoading(false)
+      setIsPlaying(true)
       playingRef.current = true
+    }
+
+    const handlePause = () => {
+      setIsPlaying(false)
+      playingRef.current = false
     }
 
     const handleLoadedData = () => {
       setVideoReady(true)
       setVideoLoaded(true)
+      setIsLoading(false)
+    }
+
+    const handleCanPlay = () => {
+      setVideoLoaded(true)
+      setIsLoading(false)
+    }
+
+    const handleWaiting = () => {
+      setIsLoading(true)
     }
 
     const handleError = (e) => {
       console.error('Erro ao carregar vídeo:', e)
+      setIsLoading(false)
+      setVideoLoaded(false)
+    }
+
+    const handleLoadStart = () => {
+      setIsLoading(true)
     }
 
     // Adicionar listeners
     video.addEventListener('playing', handlePlaying)
+    video.addEventListener('pause', handlePause)
     video.addEventListener('loadeddata', handleLoadedData)
+    video.addEventListener('canplay', handleCanPlay)
+    video.addEventListener('waiting', handleWaiting)
     video.addEventListener('error', handleError)
+    video.addEventListener('loadstart', handleLoadStart)
 
-    // Intersection Observer para controlar play/pause
+    // Forçar carregamento do vídeo
+    video.load()
+
+    // Intersection Observer para controlar play/pause e carregamento
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Seção está visível - reproduzir vídeo
-            if (video.readyState >= 3 && video.paused) {
-              video.play().catch((error) => {
-                console.error('Erro ao reproduzir vídeo:', error)
-              })
+            // Seção está visível - carregar e reproduzir vídeo
+            if (video.readyState === 0) {
+              // Vídeo ainda não começou a carregar
+              video.load()
+            }
+
+            // Tentar reproduzir quando estiver pronto
+            if (video.readyState >= 2) {
+              const playPromise = video.play()
+              if (playPromise !== undefined) {
+                playPromise
+                  .then(() => {
+                    setVideoLoaded(true)
+                    setIsLoading(false)
+                    playingRef.current = true
+                  })
+                  .catch((error) => {
+                    console.log('Autoplay bloqueado, aguardando interação do usuário:', error)
+                    // No mobile, pode ser necessário interação do usuário
+                    // Marca como carregado mas não tocando ainda
+                    if (video.readyState >= 3) {
+                      setVideoLoaded(true)
+                      setIsLoading(false)
+                    }
+                    // Tenta novamente quando o usuário interagir
+                    const tryPlayOnInteraction = () => {
+                      video.play()
+                        .then(() => {
+                          setVideoLoaded(true)
+                          setIsLoading(false)
+                          playingRef.current = true
+                        })
+                        .catch(() => { })
+                      document.removeEventListener('touchstart', tryPlayOnInteraction)
+                      document.removeEventListener('touchend', tryPlayOnInteraction)
+                      document.removeEventListener('click', tryPlayOnInteraction)
+                    }
+                    document.addEventListener('touchstart', tryPlayOnInteraction, { once: true, passive: true })
+                    document.addEventListener('touchend', tryPlayOnInteraction, { once: true, passive: true })
+                    document.addEventListener('click', tryPlayOnInteraction, { once: true })
+                  })
+              }
+            } else {
+              // Vídeo ainda não está pronto, aguardar
+              const waitForReady = () => {
+                if (video.readyState >= 2) {
+                  video.play()
+                    .then(() => {
+                      setVideoLoaded(true)
+                      setIsLoading(false)
+                      playingRef.current = true
+                    })
+                    .catch(() => {
+                      // Autoplay bloqueado, mas vídeo está carregado
+                      if (video.readyState >= 3) {
+                        setVideoLoaded(true)
+                        setIsLoading(false)
+                      }
+                    })
+                } else {
+                  setTimeout(waitForReady, 100)
+                }
+              }
+              waitForReady()
             }
           } else {
             // Seção não está visível - pausar vídeo
@@ -79,19 +182,42 @@ const VideoSection = () => {
         })
       },
       {
-        threshold: 0.5 // Vídeo toca quando pelo menos 50% da seção está visível
+        threshold: 0.3, // Reduzido para mobile - vídeo toca quando 30% está visível
+        rootMargin: '50px' // Começa a carregar antes de ficar totalmente visível
       }
     )
 
     observer.observe(section)
 
+    // Preload quando a seção estiver próxima (para mobile)
+    const preloadObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && video.readyState === 0) {
+            // Seção está próxima e vídeo não começou a carregar
+            video.load()
+          }
+        })
+      },
+      {
+        rootMargin: '200px' // Começa a carregar quando está a 200px de ficar visível
+      }
+    )
+
+    preloadObserver.observe(section)
+
     return () => {
       video.removeEventListener('playing', handlePlaying)
+      video.removeEventListener('pause', handlePause)
       video.removeEventListener('loadeddata', handleLoadedData)
+      video.removeEventListener('canplay', handleCanPlay)
+      video.removeEventListener('waiting', handleWaiting)
       video.removeEventListener('error', handleError)
+      video.removeEventListener('loadstart', handleLoadStart)
       observer.disconnect()
+      preloadObserver.disconnect()
     }
-  }, [])
+  }, [isMobile])
 
   useEffect(() => {
     // Garantir que a seção está visível desde o início
@@ -155,8 +281,8 @@ const VideoSection = () => {
       const rect = videoSection.getBoundingClientRect()
       const windowHeight = window.innerHeight
       // Verifica se a seção video está visível (pelo menos parte dela)
-      return rect.top < windowHeight && rect.bottom > 0 && 
-             (rect.top <= windowHeight * 0.7)
+      return rect.top < windowHeight && rect.bottom > 0 &&
+        (rect.top <= windowHeight * 0.7)
     }
 
     // Scroll instantâneo para seção anterior (Hero)
@@ -172,7 +298,7 @@ const VideoSection = () => {
           top: heroTop,
           behavior: 'instant'
         })
-        
+
         // Fallback caso behavior: 'instant' não seja suportado
         if (window.scrollY !== heroTop) {
           heroSection.scrollIntoView({ behavior: 'auto', block: 'start' })
@@ -285,9 +411,20 @@ const VideoSection = () => {
           loop
           muted
           playsInline
-          preload="auto"
-          onPlaying={() => setVideoLoaded(true)}
-          onCanPlay={() => setVideoLoaded(true)}
+          preload={isMobile ? "metadata" : "auto"}
+          onPlaying={() => {
+            setVideoLoaded(true)
+            setIsLoading(false)
+          }}
+          onCanPlay={() => {
+            setVideoLoaded(true)
+            setIsLoading(false)
+          }}
+          onWaiting={() => setIsLoading(true)}
+          onError={(e) => {
+            console.error('Erro no vídeo:', e)
+            setIsLoading(false)
+          }}
         >
           <source src={config.profile.video} type="video/mp4" />
           Seu navegador não suporta vídeos HTML5.
@@ -337,9 +474,36 @@ const VideoSection = () => {
       </div>
 
       {/* Indicador de carregamento - escondido após vídeo começar */}
-      {!videoLoaded && (
+      {(isLoading || !videoLoaded) && (
         <div className="video-loading">
           <div className="loading-spinner" />
+          {isMobile && (
+            <p className="loading-text">Carregando vídeo...</p>
+          )}
+        </div>
+      )}
+
+      {/* Overlay clicável para mobile quando vídeo está carregado mas não tocando */}
+      {isMobile && videoLoaded && !isPlaying && (
+        <div
+          className="video-play-overlay"
+          onClick={() => {
+            if (videoRef.current) {
+              videoRef.current.play()
+                .then(() => {
+                  setIsPlaying(true)
+                  playingRef.current = true
+                })
+                .catch(() => { })
+            }
+          }}
+        >
+          <div className="play-button">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5V19L19 12L8 5Z" fill="currentColor" />
+            </svg>
+          </div>
+          <p className="play-text">Toque para reproduzir</p>
         </div>
       )}
     </section>
