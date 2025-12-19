@@ -1,0 +1,505 @@
+/* ========================================
+   ESTILOS BASE - DESKTOP (acima de 1024px)
+   ======================================== */
+
+/* Seção principal do hero - Container fullscreen que ocupa toda a viewport */
+.hero-section {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000;
+    background-size: cover;
+    background-position: top right;
+    background-repeat: no-repeat;
+    perspective: 1000px;
+    /* Define perspectiva 3D para efeitos de profundidade */
+    scroll-snap-align: start;
+    /* Snap no início da seção */
+    scroll-snap-stop: always;
+    /* Sempre para nesta seção */
+}
+
+/* Container principal - Centraliza e limita largura máxima do conteúdo */
+.hero-container {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    z-index: 3;
+    gap: 4rem;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ========================================
+   MENU DE LINKS - LADO ESQUERDO (Desktop)
+   ======================================== */
+
+/* Container do menu de links - Posicionado à esquerda */
+.hero-menu {
+    position: relative;
+    z-index: 4;
+    flex: 0 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    transform-style: preserve-3d;
+    /* Mantém transformações 3D nos filhos */
+    will-change: transform;
+    /* Otimização: indica que transform mudará */
+    top: 10%;
+}
+
+/* Container dos itens do menu - Organiza os botões em coluna */
+.hero-menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    transform: translateY(30px) translateZ(30px);
+    /* Move para baixo e adiciona profundidade 3D */
+}
+
+/* ========================================
+   LOGO (Desktop)
+   ======================================== */
+
+/* Logo fixo no canto superior esquerdo */
+.hero-logo {
+    position: fixed;
+    top: 1rem;
+    left: 3rem;
+    width: auto;
+    height: clamp(8rem, 10vw, 15rem);
+    /* Altura responsiva entre 8rem e 15rem */
+    max-width: 300px;
+    object-fit: contain;
+    z-index: 100;
+    /* Garante que fica acima de todos os outros elementos */
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+    /* Não intercepta cliques */
+}
+
+/* ========================================
+   IMAGEM DO HERO - LADO DIREITO (Desktop)
+   ======================================== */
+
+/* Wrapper da imagem do Kaio - Posicionado à direita */
+.hero-image-wrapper {
+    position: relative;
+    flex: 0 0 auto;
+    width: clamp(300px, 45vw, 600px);
+    /* Largura responsiva entre 300px e 600px */
+    height: clamp(400px, 80vh, 900px);
+    /* Altura responsiva entre 400px e 900px */
+    transform-style: preserve-3d;
+    /* Mantém transformações 3D */
+    will-change: transform;
+    /* Otimização: indica que transform mudará */
+    z-index: 2;
+}
+
+/* Imagem do Kaio - Estilizada com bordas arredondadas e sombras */
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 20px;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.5),
+        /* Sombra externa */
+        0 0 100px rgba(255, 255, 255, 0.05) inset;
+    /* Brilho interno sutil */
+    transform: translateZ(0);
+    /* Força aceleração por hardware */
+    will-change: transform;
+    /* Otimização */
+}
+
+/* Efeito de brilho animado atrás da imagem */
+.hero-image-glow {
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(ellipse at center,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.6;
+    animation: pulse-glow 4s ease-in-out infinite;
+    /* Animação de pulsação contínua */
+}
+
+/* Animação de pulsação do brilho - Aumenta e diminui opacidade e escala */
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* ========================================
+   ELEMENTOS DECORATIVOS (Desktop)
+   ======================================== */
+
+/* Container dos elementos decorativos flutuantes */
+.hero-decorative-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    /* Não intercepta cliques */
+    overflow: hidden;
+}
+
+/* Estilo base para círculos decorativos */
+.decorative-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    filter: blur(30px);
+}
+
+/* Círculo decorativo 1 - Canto superior esquerdo */
+.decorative-circle-1 {
+    width: 400px;
+    height: 400px;
+    top: 10%;
+    left: 10%;
+}
+
+/* Círculo decorativo 2 - Canto inferior direito */
+.decorative-circle-2 {
+    width: 300px;
+    height: 300px;
+    bottom: 20%;
+    right: 20%;
+}
+
+/* Círculo decorativo 3 - Centro esquerdo */
+.decorative-circle-3 {
+    width: 250px;
+    height: 250px;
+    top: 50%;
+    left: 5%;
+}
+
+/* ========================================
+   RESPONSIVIDADE - TABLETS (769px - 1024px)
+   ======================================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+    /* Reduz padding e gap do container */
+    .hero-container {
+        padding: 0 3%;
+        gap: 3rem;
+        z-index: 10;
+        /* Garante que o container fique acima de elementos de fundo */
+    }
+
+    /* Menu - Garante que seja clicável e fique acima de outros elementos */
+    .hero-menu {
+        z-index: 11;
+        pointer-events: auto;
+        top: 10%;
+        /* Permite interação com botões */
+    }
+
+    /* Itens do menu - Garante que sejam clicáveis */
+    .hero-menu-items {
+        position: relative;
+        z-index: 12;
+        pointer-events: auto;
+        /* Permite interação com botões */
+    }
+
+    /* Reduz tamanho da imagem */
+    .hero-image-wrapper {
+        width: clamp(350px, 40vw, 500px);
+        z-index: 1;
+        /* Mantém imagem atrás do menu */
+        pointer-events: none;
+        /* Não intercepta cliques */
+    }
+
+    /* Reposiciona logo */
+    .hero-logo {
+        top: 2rem;
+        left: 2rem;
+        height: clamp(7rem, 14vw, 28rem);
+        max-width: 300px;
+        z-index: 100;
+        /* Mantém logo acima de tudo */
+    }
+}
+
+/* ========================================
+   RESPONSIVIDADE - MOBILE (até 768px)
+   ======================================== */
+
+@media (max-width: 768px) {
+
+    /* Seção hero - Garante altura fixa da viewport */
+    .hero-section {
+        height: 100vh;
+        min-height: 100vh;
+        max-height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Container - Muda layout para linha, alinha à esquerda */
+    .hero-container {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: stretch;
+        padding: 0;
+        gap: 0;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        z-index: 15;
+    }
+
+    /* Menu - Ocupa espaço à esquerda, reduz padding e aumenta gap vertical */
+    .hero-menu {
+        position: relative;
+        width: auto;
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: calc(100% - 50%);
+        /* Ocupa até 50% da largura */
+        padding: 2rem 1.5rem;
+        padding-right: 1rem;
+        gap: 10.75rem;
+        /* Espaço grande entre logo e itens do menu */
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: visible;
+        pointer-events: auto;
+        /* Permite interação com botões */
+    }
+
+    /* Itens do menu - Reduz espaçamento entre botões */
+    .hero-menu-items {
+        position: relative;
+        z-index: 21;
+        gap: 0.9rem;
+        width: 100%;
+        max-width: 100%;
+        pointer-events: auto;
+        /* Permite interação com botões */
+    }
+
+    /* Logo - Reposiciona para mobile */
+    .hero-logo {
+        position: fixed;
+        top: 3rem;
+        left: 2rem;
+        height: clamp(7rem, 14vw, 28rem);
+        max-width: 300px;
+        width: auto;
+        object-fit: contain;
+        opacity: 1 !important;
+        visibility: visible !important;
+        z-index: 100;
+        pointer-events: none;
+    }
+
+    /* Wrapper da imagem - Fixa no canto direito, ocupa 50% da largura */
+    .hero-image-wrapper {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 50%;
+        min-width: 180px;
+        max-width: 60%;
+        height: 100vh;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        pointer-events: none;
+        /* Não intercepta cliques */
+    }
+
+    /* Imagem - Remove bordas arredondadas, ajusta sombras para mobile */
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 0;
+        /* Remove bordas arredondadas no mobile */
+        box-shadow: -20px 0 60px rgba(0, 0, 0, 0.8);
+        /* Sombra lateral esquerda */
+        filter: brightness(1.05) contrast(1.1);
+        /* Ajuste de brilho e contraste */
+        pointer-events: none;
+    }
+
+    /* Brilho da imagem - Reduz opacidade e blur no mobile */
+    .hero-image-glow {
+        opacity: 0.3;
+        filter: blur(20px);
+    }
+
+    /* Círculo decorativo 1 - Reduz tamanho e opacidade */
+    .decorative-circle-1 {
+        width: 150px;
+        height: 150px;
+        top: 10%;
+        left: -5%;
+        opacity: 0.3;
+    }
+
+    /* Círculo decorativo 2 - Reduz tamanho e opacidade */
+    .decorative-circle-2 {
+        width: 120px;
+        height: 120px;
+        bottom: 10%;
+        right: 45%;
+        opacity: 0.2;
+    }
+
+    /* Círculo decorativo 3 - Esconde no mobile */
+    .decorative-circle-3 {
+        display: none;
+    }
+
+    /* Desabilita efeitos 3D no mobile para melhor performance */
+    .hero-menu,
+    .hero-image-wrapper {
+        transform: none !important;
+        transform-style: flat !important;
+    }
+
+    .hero-menu *,
+    .hero-image-wrapper * {
+        transform: none !important;
+    }
+}
+
+/* ========================================
+   RESPONSIVIDADE - MOBILE PEQUENO (até 480px)
+   ======================================== */
+
+@media (max-width: 480px) {
+
+    /* Menu - Reduz ainda mais padding e gap */
+    .hero-menu {
+        padding: 1.5rem 1rem;
+        padding-right: 0.75rem;
+        gap: 1.5rem;
+        max-width: calc(100% - 45%);
+        /* Reduz largura máxima para dar mais espaço à imagem */
+    }
+
+    /* Logo - Reposiciona para telas pequenas */
+    .hero-logo {
+        top: 3.25rem;
+        left: 1.0rem;
+        height: clamp(6rem, 12vw, 20rem);
+        max-width: 300px;
+    }
+
+    /* Itens do menu - Reduz espaçamento entre botões */
+    .hero-menu-items {
+        gap: 1.2rem;
+        top: -3rem;
+    }
+
+    /* Wrapper da imagem - Ocupa 45% da largura */
+    .hero-image-wrapper {
+        width: 45%;
+        min-width: 140px;
+    }
+
+    /* Imagem - Ajusta sombra para telas pequenas */
+    .hero-image {
+        box-shadow: -15px 0 40px rgba(0, 0, 0, 0.9);
+    }
+}
+
+/* ========================================
+   RESPONSIVIDADE - MOBILE MUITO PEQUENO (até 360px)
+   ======================================== */
+
+@media (max-width: 360px) {
+
+    /* Menu - Padding mínimo */
+    .hero-menu {
+        padding: 1.25rem 0.75rem;
+        gap: 1.25rem;
+    }
+
+    /* Logo - Reposiciona e ajusta tamanho */
+    .hero-logo {
+        top: 3rem;
+        right: 1rem;
+        /* Move para direita em telas muito pequenas */
+        height: clamp(4rem, 15vw, 30rem);
+        max-width: 300px;
+    }
+
+    /* Itens do menu - Espaçamento mínimo entre botões */
+    .hero-menu-items {
+        gap: 0.6rem;
+        top: -4rem;
+    }
+
+    /* Wrapper da imagem - Ocupa 40% da largura */
+    .hero-image-wrapper {
+        width: 40%;
+        min-width: 120px;
+    }
+}
+
+/* ========================================
+   OTIMIZAÇÕES DE PERFORMANCE
+   ======================================== */
+
+/* Aceleração por GPU - Força renderização via GPU para melhor performance */
+.hero-section,
+.hero-container,
+.hero-menu,
+.hero-image-wrapper,
+.hero-image {
+    transform: translateZ(0);
+    /* Cria novo contexto de composição */
+    backface-visibility: hidden;
+    /* Otimiza animações 3D */
+    -webkit-backface-visibility: hidden;
+    /* Prefixo para WebKit */
+}
