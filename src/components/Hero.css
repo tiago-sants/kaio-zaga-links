@@ -503,3 +503,65 @@
     -webkit-backface-visibility: hidden;
     /* Prefixo para WebKit */
 }
+
+/* ========================================
+   INDICADOR DE SCROLL - PARTE INFERIOR
+   ======================================== */
+
+.hero-scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    z-index: 10;
+    pointer-events: none;
+    /* Não interfere com cliques */
+}
+
+.scroll-indicator-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.8);
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+    will-change: transform;
+    /* Otimiza animação */
+}
+
+.scroll-indicator-arrow svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+}
+
+.scroll-indicator-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsivo - Mobile */
+@media (max-width: 768px) {
+    .hero-scroll-indicator {
+        bottom: 1.5rem;
+        gap: 0.5rem;
+    }
+
+    .scroll-indicator-arrow svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .scroll-indicator-text {
+        font-size: 0.65rem;
+    }
+}

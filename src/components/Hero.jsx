@@ -243,6 +243,7 @@ const Hero = () => {
     // Verificar se é mobile para desabilitar efeitos 3D
     const [isMobile, setIsMobile] = useState(false)
     const [imageUrl, setImageUrl] = useState('')
+    const [showScrollIndicator, setShowScrollIndicator] = useState(false)
 
     useEffect(() => {
         const checkMobile = () => {
@@ -253,6 +254,38 @@ const Hero = () => {
         checkMobile()
         window.addEventListener('resize', checkMobile)
         return () => window.removeEventListener('resize', checkMobile)
+    }, [])
+
+    // Mostrar indicador de scroll após 3 segundos
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowScrollIndicator(true)
+        }, 3000)
+
+        return () => clearTimeout(timer)
+    }, [])
+
+    // Esconder indicador quando sair da seção Hero
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!containerRef.current) return
+
+            const rect = containerRef.current.getBoundingClientRect()
+            const windowHeight = window.innerHeight
+
+            // Se a seção Hero não estiver mais visível na parte superior da tela
+            if (rect.bottom < windowHeight * 0.3 || rect.top > windowHeight) {
+                setShowScrollIndicator(false)
+            } else if (rect.top <= windowHeight * 0.7 && window.scrollY < windowHeight * 0.5) {
+                // Se estiver na seção Hero (topo da página ou início da seção)
+                setShowScrollIndicator(true)
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll, { passive: true })
+        handleScroll() // Verificar estado inicial
+
+        return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
     return (
@@ -329,6 +362,58 @@ const Hero = () => {
                     />
                 ))}
             </div>
+
+            {/* Indicador de scroll - aparece após 3 segundos */}
+            {showScrollIndicator && (
+                <motion.div
+                    className="hero-scroll-indicator"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <motion.div
+                        className="scroll-indicator-arrow"
+                        animate={{
+                            y: [0, 8, 0]
+                        }}
+                        transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: 'easeInOut'
+                        }}
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M7 10L12 15L17 10"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </motion.div>
+                    <motion.span
+                        className="scroll-indicator-text"
+                        animate={{
+                            opacity: [0.6, 1, 0.6]
+                        }}
+                        transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: 'easeInOut'
+                        }}
+                    >
+                        Arraste para cima
+                    </motion.span>
+                </motion.div>
+            )}
         </section>
     )
 }
